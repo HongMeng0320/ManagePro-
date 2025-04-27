@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: springDemo
+  
+  # 数据库连接配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/operation?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: ghk1314tpp@
+    
+  # 上传文件大小限制
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  
+  # Redis配置 - 如果不需要Redis可以注释或移除此部分
+  # data:
+  #   redis:
+  #     host: localhost
+  #     port: 6379
+
+# 阿里云OSS配置 - 已禁用
+aliyun:
+  oss:
+    enabled: false  # 禁用阿里云OSS
+    endpoint: 
+    access-key-id:
+    access-key-secret:
+    bucket-name:
+
+# MyBatis配置
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+# JWT配置
+jwt:
+  secret: 59d7d05e9d9358f158990326dc5dc8ee
+  expiration: 86400000
+
+# 日志配置
+logging:
+  level:
+    com:
+      example:
+        springdemo: debug
+
+# 分页配置
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+# 服务器端口
+server:
+  port: 8080 
