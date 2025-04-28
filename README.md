@@ -2,6 +2,11 @@
 
 ## 项目概述
 这是一个基于 Spring Boot 和 Vue.js 的积分管理系统，实现了用户管理、积分管理、积分日志等功能。系统采用前后端分离架构，使用 JWT 进行身份认证和授权。
+![image](https://github.com/user-attachments/assets/d3657b41-a934-4172-997c-621f9366a087)
+![image](https://github.com/user-attachments/assets/09460535-3a95-4a75-b458-45b3ecd827c5)
+![image](https://github.com/user-attachments/assets/9ec1151c-7048-4600-b0a9-283ce961b63e)
+![image](https://github.com/user-attachments/assets/65d21266-add5-4142-bbc8-c23dbeeac117)
+![image](https://github.com/user-attachments/assets/d37df6da-8d58-48a7-add3-9a0f2c76067c)
 
 ## 技术栈
 
@@ -132,10 +137,25 @@ springDemo/
 
 ## 贡献指南
 1. Fork 项目
-2. 创建特性分支
-3. 提交更改
-4. 推送到分支
-5. 创建Pull Request
+2. 提交更改
+3. 推送到分支
+4. 创建Pull Request
 
 ## 许可证
 MIT License 
+## 后续优化
+## 功能扩展
+积分规则引擎：支持自定义规则和动态配置
+数据分析：添加统计功能和可视化
+消息通知：集成消息推送系统
+## 安全性增强
+认证授权：实现多因素认证、OAuth2.0
+数据安全：敏感数据加密、数据脱敏
+接口安全：添加签名验证、防重放攻击
+## 可维护性提升
+代码质量：添加单元测试、自动化测试
+监控告警：添加系统监控、性能监控
+文档完善：完善API文档、开发文档
+## 用户体验优化
+前端优化：优化加载速度、响应式设计
+交互优化：优化表单验证、添加引导
