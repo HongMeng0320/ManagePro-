@@ -1,6 +1,6 @@
 package com.example.springdemo.config;
 
-import com.example.springdemo.utils.JwtUtil;
+import com.example.springdemo.service.TokenService;
 import com.example.springdemo.utils.ThreadLocalUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,7 +14,7 @@ import java.util.Map;
 public class JwtAuthInterceptor implements HandlerInterceptor {
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private TokenService tokenService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -33,8 +33,14 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
         }
         
         try {
-            // 解析token
-            Map<String, Object> claims = jwtUtil.parseToken(token);
+            // 验证token
+            Map<String, Object> claims = tokenService.validateToken(token);
+            
+            if (claims == null) {
+                // token无效，返回未授权状态码
+                response.setStatus(401);
+                return false;
+            }
             
             // 将用户信息存入ThreadLocal，供后续使用
             ThreadLocalUtil.set(claims);

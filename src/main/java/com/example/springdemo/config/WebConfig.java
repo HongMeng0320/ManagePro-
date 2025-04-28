@@ -15,20 +15,24 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 添加JWT认证拦截器
+        System.out.println("注册JWT拦截器，排除登录和密码重置路径");
         registry.addInterceptor(jwtAuthInterceptor)
-                .addPathPatterns("/api/**")  // 拦截所有/api/开头的请求
-                .excludePathPatterns(        // 排除不需要认证的路径
-                        "/api/users/login",
-                        "/api/users/register"
+                .addPathPatterns("/api/**")  // 拦截所有/api/**请求
+                .excludePathPatterns(
+                        "/api/login",        // 排除登录接口
+                        "/api/register",     // 排除注册接口
+                        "/api/reset-password" // 排除密码重置接口
                 );
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        // 跨域配置
+        // 添加CORS配置
         registry.addMapping("/**")
                 .allowedOrigins("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
-                .allowedHeaders("*");
+                .allowedHeaders("*")
+                .allowCredentials(false)
+                .maxAge(3600);
     }
 } 

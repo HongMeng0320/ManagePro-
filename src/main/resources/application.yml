@@ -15,17 +15,21 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   
-  # Redis配置 - 如果不需要Redis可以注释或移除此部分
-  # data:
-  #   redis:
-  #     host: localhost
-  #     port: 6379
+  # Redis配置
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 10000
+      # 如果需要密码，取消下面注释
+      # password: your_password
 
 # 阿里云OSS配置 - 已禁用
 aliyun:
   oss:
     enabled: false  # 禁用阿里云OSS
-    endpoint: 
+    endpoint:
     access-key-id:
     access-key-secret:
     bucket-name:
@@ -39,7 +43,7 @@ mybatis:
 # JWT配置
 jwt:
   secret: 59d7d05e9d9358f158990326dc5dc8ee
-  expiration: 86400000
+  expiration: 14400000  # 4小时 (4 * 60 * 60 * 1000 = 14400000毫秒)
 
 # 日志配置
 logging:

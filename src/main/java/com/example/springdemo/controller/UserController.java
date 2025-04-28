@@ -3,8 +3,8 @@ package com.example.springdemo.controller;
 import com.example.springdemo.common.Result;
 import com.example.springdemo.pojo.User;
 import com.example.springdemo.service.PointService;
+import com.example.springdemo.service.TokenService;
 import com.example.springdemo.service.UserService;
-import com.example.springdemo.utils.JwtUtil;
 import com.example.springdemo.utils.ThreadLocalUtil;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class UserController {
     private PointService pointService;
     
     @Autowired
-    private JwtUtil jwtUtil;
+    private TokenService tokenService;
 
     /**
      * 用户登录
@@ -34,18 +34,23 @@ public class UserController {
         String username = params.get("username");
         String password = params.get("password");
         
+        System.out.println("接收到登录请求 - 用户名: " + username);
+        
         // 登录验证
         User user = userService.login(username, password);
         if (user == null) {
+            System.out.println("登录失败 - 用户名或密码错误");
             return Result.error("用户名或密码错误");
         }
         
-        // 生成JWT
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", user.getUserId());
-        claims.put("username", user.getUsername());
-        claims.put("role", user.getRole());
-        String token = jwtUtil.generateToken(claims);
+        System.out.println("登录成功 - 用户ID: " + user.getUserId());
+        
+        // 先使该用户之前的所有令牌失效
+        tokenService.invalidateUserTokens(user.getUserId());
+        
+        // 生成新的JWT令牌
+        String token = tokenService.generateToken(user.getUserId(), user.getUsername());
+        System.out.println("生成新的JWT令牌: " + token.substring(0, 20) + "...");
         
         // 返回结果
         Map<String, Object> result = new HashMap<>();
@@ -188,6 +193,49 @@ public class UserController {
         if (!success) {
             return Result.error("更新失败");
         }
+        
+        return Result.success();
+    }
+
+    /**
+     * 用户修改密码
+     */
+    @PostMapping("/user/change-password")
+    public Result<Void> changePassword(@RequestBody Map<String, String> params) {
+        String oldPassword = params.get("oldPassword");
+        String newPassword = params.get("newPassword");
+        
+        if (oldPassword == null || newPassword == null) {
+            return Result.error("参数错误");
+        }
+        
+        Map<String, Object> claims = ThreadLocalUtil.get();
+        Integer userId = (Integer) claims.get("userId");
+        
+        boolean success = userService.updatePassword(userId, oldPassword, newPassword);
+        if (!success) {
+            return Result.error("原密码错误");
+        }
+        
+        // 密码修改成功后，使当前用户的所有令牌失效
+        tokenService.invalidateUserTokens(userId);
+        
+        return Result.success();
+    }
+    
+    /**
+     * 用户退出登录
+     */
+    @PostMapping("/logout")
+    public Result<Void> logout(@RequestHeader("Authorization") String authHeader) {
+        // 提取令牌
+        String token = authHeader;
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        
+        // 使令牌失效
+        tokenService.invalidateToken(token);
         
         return Result.success();
     }

@@ -2,29 +2,11 @@ package com.example.springdemo.utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Random;
 
 /**
  * MD5工具类，用于密码加密和验证
  */
 public class Md5Util {
-    
-    private static final String SALT_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private static final int SALT_LENGTH = 8;
-    
-    /**
-     * 获取随机盐值
-     * @return 随机盐值
-     */
-    private static String getSalt() {
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-        for (int i = 0; i < SALT_LENGTH; i++) {
-            int index = random.nextInt(SALT_CHARS.length());
-            sb.append(SALT_CHARS.charAt(index));
-        }
-        return sb.toString();
-    }
     
     /**
      * 计算MD5值
@@ -50,14 +32,24 @@ public class Md5Util {
     }
     
     /**
-     * 对密码进行加密（带盐值）
+     * 对密码进行加密
      * @param password 原始密码
-     * @return 加密后的密码，格式：md5(password+salt)+salt
+     * @return 加密后的密码
      */
     public static String getMD5String(String password) {
-        String salt = getSalt();
-        String md5 = md5(password + salt);
-        return md5 + salt;
+        System.out.println("进行MD5加密，密码: " + password);
+        String md5Value = md5(password);
+        System.out.println("MD5加密结果: " + md5Value);
+        return md5Value;
+    }
+    
+    /**
+     * 对密码进行加密 (别名方法，保持兼容性)
+     * @param password 原始密码
+     * @return 加密后的密码
+     */
+    public static String encode(String password) {
+        return getMD5String(password);
     }
     
     /**
@@ -67,19 +59,29 @@ public class Md5Util {
      * @return 验证结果
      */
     public static boolean checkPassword(String password, String md5Str) {
-        // md5Str格式：md5(password+salt)+salt
-        if (md5Str.length() < SALT_LENGTH) {
-            return false;
-        }
+        System.out.println("验证密码: " + password);
+        System.out.println("数据库中存储的密码: " + md5Str);
         
-        // 取出盐值
-        String salt = md5Str.substring(md5Str.length() - SALT_LENGTH);
-        // 取出MD5值
-        String md5 = md5Str.substring(0, md5Str.length() - SALT_LENGTH);
-        // 重新计算MD5值
-        String newMd5 = md5(password + salt);
+        // 对输入的密码进行MD5加密
+        String calculated = getMD5String(password);
+        System.out.println("计算得到的MD5值: " + calculated);
         
-        // 比较MD5值
-        return md5.equals(newMd5);
+        // 比较两个MD5值
+        boolean result = md5Str.equals(calculated);
+        System.out.println("验证结果: " + result);
+        return result;
     }
-}
+    
+    /**
+     * 用于测试的主方法
+     */
+    public static void main(String[] args) {
+        String[] passwords = {"admin123", "123456", "password", "admin", "user1"};
+        
+        System.out.println("====== 密码MD5值对照表 ======");
+        for (String password : passwords) {
+            System.out.println(password + " => " + encode(password));
+        }
+        System.out.println("===========================");
+    }
+} 
